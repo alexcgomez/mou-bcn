@@ -1,0 +1,25 @@
+.top-navbar {
+  position: fixed;
+  background-color: #20232a;
+  width: 100%;
+  box-shadow: 10px 10px 100px black;
+  border-radius: 2px;
+  font-size: medium;
+  color: white;
+  min-height: 3rem;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-navbar {
+  width: 8rem;
+  margin: 1rem 10rem;
+}
+
+@media (min-width: 400px) {
+  .logo-navbar {
+    width: 8rem;
+    margin-left: 1rem;
+  }
+}

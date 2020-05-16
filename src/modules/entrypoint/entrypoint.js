@@ -8,8 +8,12 @@ class Entrypoint extends React.Component {
     return (
       <div className="background">
         <div>
-          <img src={MetroLogo} alt="Metro"></img>
-          <NavLink to="/lineas" exact activeStyle={{ textDecoration: "none" }}>
+          <img src={MetroLogo} className="logo-entrypoint" alt="Metro"></img>
+          <NavLink
+            to="/home"
+            exact
+            style={{ textDecoration: "none", color: "white" }}
+          >
             <div className="principalButton">
               <h1 name="name">MouBCN</h1>
             </div>
