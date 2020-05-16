@@ -22,14 +22,14 @@ export default class Navbar extends Component {
           exact
           style={{ textDecoration: "none", color: "white" }}
         >
-          <ButtonSimple text="Restrasos" />
+          <ButtonSimple text="Retrasos" />
         </NavLink>
         <NavLink
-          to="/linias"
+          to="/lineas"
           exact
           style={{ textDecoration: "none", color: "white" }}
         >
-          <ButtonSimple text="Línies" />
+          <ButtonSimple text="Lineas" />
         </NavLink>
         <NavLink
           to="/home"
