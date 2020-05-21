@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import MetroLogo from "../../../resources/metro-logo.png";
+import MetroLogo from "../../resources/metro-logo.png";
 import "./navbar.scss";
 import Button from "../button/button";
 import ButtonSimple from "../buttonSimple/buttonSimple";
