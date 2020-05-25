@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import MetroLogo from "../../resources/metro-logo.png";
 import "./navbar.scss";
-import Button from "../button/button";
+import Button from "../button/Button";
 import ButtonSimple from "../buttonSimple/buttonSimple";
 import { NavLink } from "react-router-dom";
 
@@ -10,34 +10,7 @@ export default class Navbar extends Component {
     return (
       <div className="top-navbar">
         <img src={MetroLogo} className="logo-navbar" alt="Metro" />
-        <NavLink
-          to="/paradas"
-          exact
-          style={{ textDecoration: "none", color: "white" }}
-        >
-          <ButtonSimple text="Parades" />
-        </NavLink>
-        <NavLink
-          to="/retrasos"
-          exact
-          style={{ textDecoration: "none", color: "white" }}
-        >
-          <ButtonSimple text="Retrasos" />
-        </NavLink>
-        <NavLink
-          to="/lineas"
-          exact
-          style={{ textDecoration: "none", color: "white" }}
-        >
-          <ButtonSimple text="Lineas" />
-        </NavLink>
-        <NavLink
-          to="/home"
-          exact
-          style={{ textDecoration: "none", color: "white" }}
-        >
           <Button text="Inicio" />
-        </NavLink>
       </div>
     );
   }

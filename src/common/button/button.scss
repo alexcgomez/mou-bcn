@@ -15,6 +15,7 @@
 .button:hover {
   transition: 0.5s;
   background-color: #aa0000;
+  cursor: pointer;
 }
 @media (min-width: 400px) {
   .button {
