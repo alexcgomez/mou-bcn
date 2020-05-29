@@ -2,15 +2,15 @@ import React, { Component } from "react";
 import "./home.scss";
 import Navbar from "../../common/navbar/navbar";
 import MainContainer from "../../common/main-container/main-container";
-import axios from "axios";
 import { connect } from "react-redux";
-import { mostrarLineas } from "../../actions/mostrarLineas";
+import { downloadLines } from "../../actions/lines/DownloadLines.action";
 
 class Home extends Component {
   render() {
+    console.log(this.props.metroLines);
     return (
       <div className="home-background">
-        <Navbar/>
+        <Navbar />
         <MainContainer>
           <p></p>
         </MainContainer>
@@ -18,18 +18,20 @@ class Home extends Component {
     );
   }
 
-  async componentDidMount() {
-    const response = await axios.get("https://api.tmb.cat/v1/transit/linies/metro?app_id=07ba35b4&app_key=17d5fecb81e92f3daa9e1f5e869db9c2");
-    mostrarLineas(response.data.features);
+  componentDidMount() {
+    this.props.downloadLines();
   }
 }
 
-const mapStateToProps = state => ({
- ...state
+const mapStateToProps = (state) => ({
+  metroLines: state.metroLines,
 });
+
 function mapDispatchToProps(dispatch) {
-  return { mostrarLineas: linea => dispatch(mostrarLineas(linea)) };
+  return {
+    downloadLines: () => dispatch(downloadLines()),
+  };
 }
 
-const ConnectedHome = connect(mapStateToProps,mapDispatchToProps)(Home);
+const ConnectedHome = connect(mapStateToProps, mapDispatchToProps)(Home);
 export default ConnectedHome;

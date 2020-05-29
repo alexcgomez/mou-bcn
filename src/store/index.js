@@ -1,8 +1,7 @@
-import { createStore } from 'redux';
-import rootReducer from "../reducers/reducer";
+import { createStore, applyMiddleware } from "redux";
+import reduxThunk from "redux-thunk";
+import reducers from "../reducers";
 
-const initialState = {lineas: []};
-
-export const store = createStore(rootReducer,initialState);
+export const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
 
 window.store = store;
