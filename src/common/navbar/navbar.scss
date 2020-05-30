@@ -14,12 +14,24 @@
 }
 .logo-navbar {
   width: 8rem;
-  margin: 1rem 10rem;
+  margin: 1rem 10rem 1rem 1rem;
 }
 
-@media (min-width: 400px) {
+.titulo {
+  font-size: 100px;
+  font-weight: bold;
+  margin-right: 12rem;
+}
+
+@media (max-width: 600px) {
   .logo-navbar {
-    width: 8rem;
-    margin-left: 1rem;
+    width: 4rem;
+    margin: 1rem;
+  }
+
+  .titulo {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
   }
 }

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from 'axios';
 import "./main-container.scss";
 
 export default class MainContainer extends Component {
@@ -8,10 +7,6 @@ export default class MainContainer extends Component {
     this.state = "";
   }
   render() {
-    return <div className="main-container">
-      {this.props.children}
-    </div>;
+    return <div className="main-container">{this.props.children}</div>;
   }
-
-
 }
