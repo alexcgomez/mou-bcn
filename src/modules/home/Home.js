@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./home.scss";
+import "./Home.scss";
 import Navbar from "../../common/navbar/navbar";
 import MainContainer from "../../common/main-container/main-container";
 import { connect } from "react-redux";
