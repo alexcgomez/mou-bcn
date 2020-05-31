@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./main-container.scss";
+import Navbar from "../../common/navbar/navbar";
 
 export default class MainContainer extends Component {
   constructor() {
@@ -7,6 +8,11 @@ export default class MainContainer extends Component {
     this.state = "";
   }
   render() {
-    return <div className="main-container">{this.props.children}</div>;
+    return (
+      <div className="container-background">
+        <Navbar />
+        {this.props.children}
+      </div>
+    );
   }
 }

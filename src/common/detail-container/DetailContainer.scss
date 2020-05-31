@@ -1,0 +1,18 @@
+.detail-container {
+  margin-top: 10rem;
+  width: 60%;
+  border-radius: 10px;
+  width: 1000px;
+  height: fit-content;
+  margin-top: 15rem;
+  box-shadow: 0px 0px 50px black;
+  background: #2f3439;
+  padding: 3rem;
+}
+
+@media only screen and (max-width: 600px) {
+  /* For tablets: */
+  .detail-container {
+    width: fit-content;
+  }
+}

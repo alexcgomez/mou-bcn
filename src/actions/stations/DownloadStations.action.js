@@ -23,7 +23,7 @@ export const downloadStations = () => async (dispatch) => {
     const response = await axios.get(
       "https://api.tmb.cat/v1/transit/estacions?app_id=07ba35b4&app_key=17d5fecb81e92f3daa9e1f5e869db9c2"
     );
-    return dispatch(getStationsSuccess(response.data));
+    return dispatch(getStationsSuccess(response.data.features));
   } catch (error) {
     return dispatch(getStationsFailure(error.message));
   }
