@@ -9,7 +9,7 @@ export default class Navbar extends Component {
       <div className="top-navbar">
         <img src={MetroLogo} className="logo-navbar" alt="Metro" />
         <p className="titulo">MouBCN</p>
-        <Button text="Inicio" link="/home" />
+        <Button text="Inici" link="/home" />
       </div>
     );
   }

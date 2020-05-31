@@ -17,10 +17,10 @@ class Home extends Component {
           <Table responsive hover variant="dark">
             <thead>
               <tr style={{ backgroundColor: "grey", color: "black" }}>
-                <th>Línea</th>
+                <th>Línia</th>
                 <th>Origen</th>
-                <th>Destino</th>
-                <th>Ver linea</th>
+                <th>Destí</th>
+                <th>Veure linia</th>
               </tr>
             </thead>
             <tbody>{this.listLines()}</tbody>
@@ -32,7 +32,6 @@ class Home extends Component {
 
   componentDidMount() {
     this.props.downloadLines();
-    this.props.downloadStations();
   }
 
   listLines() {
@@ -71,13 +70,11 @@ class Home extends Component {
 
 const mapStateToProps = (state) => ({
   metroLines: state.metroLines,
-  metroStations: state.metroStations,
 });
 
 function mapDispatchToProps(dispatch) {
   return {
     downloadLines: () => dispatch(downloadLines()),
-    downloadStations: () => dispatch(downloadStations()),
   };
 }
 

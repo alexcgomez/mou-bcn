@@ -17,11 +17,13 @@ const getStationsFailure = (error) => ({
   error,
 });
 
-export const downloadStations = () => async (dispatch) => {
+export const downloadStations = (id) => async (dispatch) => {
   dispatch(getStationsAttempt());
   try {
     const response = await axios.get(
-      "https://api.tmb.cat/v1/transit/estacions?app_id=07ba35b4&app_key=17d5fecb81e92f3daa9e1f5e869db9c2"
+      "https://api.tmb.cat/v1/transit/linies/metro/" +
+        id +
+        "/estacions?app_id=07ba35b4&app_key=17d5fecb81e92f3daa9e1f5e869db9c2"
     );
     return dispatch(getStationsSuccess(response.data.features));
   } catch (error) {
