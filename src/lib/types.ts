@@ -79,3 +79,8 @@ export interface MetroStation {
   status: string;
   coordinates: [number, number]; // [longitude, latitude]
 }
+
+// Línea con sus estaciones (para el mapa general)
+export interface MetroLineWithStations extends MetroLine {
+  stations: MetroStation[];
+}

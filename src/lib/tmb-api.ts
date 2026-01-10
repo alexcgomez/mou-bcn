@@ -4,6 +4,7 @@ import type {
   MetroStationProperties,
   MetroLine,
   MetroStation,
+  MetroLineWithStations,
 } from "./types";
 
 const TMB_BASE_URL = "https://api.tmb.cat/v1/transit";
@@ -66,4 +67,21 @@ export async function getMetroStations(lineCode: number): Promise<MetroStation[]
 export async function getMetroLine(lineCode: number): Promise<MetroLine | null> {
   const lines = await getMetroLines();
   return lines.find((line) => line.code === lineCode) || null;
+}
+
+// Obtener todas las líneas con sus estaciones (para el mapa general)
+export async function getAllLinesWithStations(): Promise<MetroLineWithStations[]> {
+  const lines = await getMetroLines();
+  
+  const linesWithStations = await Promise.all(
+    lines.map(async (line) => {
+      const stations = await getMetroStations(line.code);
+      return {
+        ...line,
+        stations,
+      };
+    })
+  );
+  
+  return linesWithStations;
 }

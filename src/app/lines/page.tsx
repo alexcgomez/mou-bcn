@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getMetroLines } from "@/lib/tmb-api";
+import { getMetroLines, getAllLinesWithStations } from "@/lib/tmb-api";
 import {
   Table,
   TableBody,
@@ -11,9 +11,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MetroNetworkMap } from "@/components/metro-network-map";
 
 export default async function LinesPage() {
-  const lines = await getMetroLines();
+  const [lines, linesWithStations] = await Promise.all([
+    getMetroLines(),
+    getAllLinesWithStations(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -23,6 +27,9 @@ export default async function LinesPage() {
           Consulta totes les línies del metro de Barcelona i les seves estacions
         </p>
       </div>
+
+      {/* Mapa de la xarxa de metro */}
+      <MetroNetworkMap lines={linesWithStations} />
 
       <Card className="shadow-lg overflow-hidden py-0 gap-0">
         <CardHeader className="bg-gray-50 border-b py-4 px-6">
