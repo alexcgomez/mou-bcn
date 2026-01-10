@@ -25,21 +25,21 @@ export interface TMBFeature<T> {
 
 // Propiedades de una línea de Metro
 export interface MetroLineProperties {
+  ID_LINIA: number;
   CODI_LINIA: number;
   NOM_LINIA: string;
   DESC_LINIA: string;
   ORIGEN_LINIA: string;
   DESTI_LINIA: string;
-  NUM_ESTACIONS: number;
   COLOR_LINIA: string; // hex sin #
   COLOR_AUX_LINIA: string;
   COLOR_TEXT_LINIA: string;
   ORDRE_LINIA: number;
-  CODI_FAMILIA: string;
+  CODI_FAMILIA: number;
+  NOM_FAMILIA: string;
   ID_OPERADOR: number;
   NOM_OPERADOR: string;
-  DATA_INICI: string | null;
-  DATA_FI: string | null;
+  NOM_TIPUS_TRANSPORT: string;
 }
 
 // Propiedades de una estación de Metro
@@ -65,8 +65,8 @@ export interface MetroLine {
   description: string;
   origin: string;
   destination: string;
-  stationsCount: number;
   color: string;
+  order: number;
 }
 
 export interface MetroStation {

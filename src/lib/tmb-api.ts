@@ -28,16 +28,18 @@ async function fetchTMB<T>(endpoint: string): Promise<TMBResponse<T>> {
 export async function getMetroLines(): Promise<MetroLine[]> {
   const data = await fetchTMB<MetroLineProperties>("/linies/metro");
 
-  return data.features.map((feature) => ({
-    id: feature.id,
-    code: feature.properties.CODI_LINIA,
-    name: feature.properties.NOM_LINIA,
-    description: feature.properties.DESC_LINIA,
-    origin: feature.properties.ORIGEN_LINIA,
-    destination: feature.properties.DESTI_LINIA,
-    stationsCount: feature.properties.NUM_ESTACIONS,
-    color: `#${feature.properties.COLOR_LINIA}`,
-  }));
+  return data.features
+    .map((feature) => ({
+      id: feature.id,
+      code: feature.properties.CODI_LINIA,
+      name: feature.properties.NOM_LINIA,
+      description: feature.properties.DESC_LINIA,
+      origin: feature.properties.ORIGEN_LINIA,
+      destination: feature.properties.DESTI_LINIA,
+      color: `#${feature.properties.COLOR_LINIA}`,
+      order: feature.properties.ORDRE_LINIA,
+    }))
+    .sort((a, b) => a.order - b.order);
 }
 
 // Obtener estaciones de una línea de metro
