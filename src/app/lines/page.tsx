@@ -36,15 +36,17 @@ export default async function LinesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center sm:text-left">
+      <header className="text-center sm:text-left">
         <h1 className="text-3xl font-bold text-gray-900">Línies de Metro</h1>
         <p className="mt-2 text-gray-600">
           Consulta totes les línies del metro de Barcelona i les seves estacions
         </p>
-      </div>
+      </header>
 
       {/* Mapa de la xarxa de metro */}
-      <MetroNetworkMapWrapper lines={linesWithStations} />
+      <section aria-label="Mapa de la xarxa de metro">
+        <MetroNetworkMapWrapper lines={linesWithStations} />
+      </section>
 
       <Card className="shadow-lg overflow-hidden py-0 gap-0">
         <CardHeader className="bg-gray-50 border-b py-4 px-6">
@@ -57,10 +59,10 @@ export default async function LinesPage() {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-100 hover:bg-gray-100">
-                <TableHead className="w-24 font-semibold bg-gray-100">Línia</TableHead>
-                <TableHead className="font-semibold bg-gray-100">Origen</TableHead>
-                <TableHead className="font-semibold bg-gray-100">Destí</TableHead>
-                <TableHead className="text-right font-semibold w-44 bg-gray-100">Acció</TableHead>
+                <TableHead className="w-24 font-semibold bg-gray-100" scope="col">Línia</TableHead>
+                <TableHead className="font-semibold bg-gray-100" scope="col">Origen</TableHead>
+                <TableHead className="font-semibold bg-gray-100" scope="col">Destí</TableHead>
+                <TableHead className="text-right font-semibold w-44 bg-gray-100" scope="col">Acció</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -73,6 +75,7 @@ export default async function LinesPage() {
                         color: "white",
                       }}
                       className="font-bold text-sm px-3 py-1.5 shadow-sm"
+                      aria-label={`Línia ${line.name}`}
                     >
                       {line.name}
                     </Badge>
@@ -84,7 +87,8 @@ export default async function LinesPage() {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className="hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
+                        className="hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+                        aria-label={`Veure estacions de la línia ${line.name}`}
                       >
                         Veure estacions →
                       </Button>

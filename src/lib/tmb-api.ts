@@ -6,61 +6,155 @@ import type {
   MetroStation,
   MetroLineWithStations,
 } from "./types";
+import "./env"; // Validar variables de entorno al importar
 
 const TMB_BASE_URL = "https://api.tmb.cat/v1/transit";
 const APP_ID = process.env.TMB_APP_ID;
 const APP_KEY = process.env.TMB_APP_KEY;
 
+export class TMBAPIError extends Error {
+  constructor(
+    message: string,
+    public statusCode?: number,
+    public endpoint?: string
+  ) {
+    super(message);
+    this.name = "TMBAPIError";
+  }
+}
+
 async function fetchTMB<T>(endpoint: string): Promise<TMBResponse<T>> {
-  const url = `${TMB_BASE_URL}${endpoint}?app_id=${APP_ID}&app_key=${APP_KEY}`;
-
-  const response = await fetch(url, {
-    next: { revalidate: 3600 }, // Cache por 1 hora
-  });
-
-  if (!response.ok) {
-    throw new Error(`TMB API error: ${response.status}`);
+  if (!APP_ID || !APP_KEY) {
+    throw new TMBAPIError(
+      "TMB API credentials are not configured. Please check your environment variables.",
+      undefined,
+      endpoint
+    );
   }
 
-  return response.json();
+  const url = `${TMB_BASE_URL}${endpoint}?app_id=${APP_ID}&app_key=${APP_KEY}`;
+
+  try {
+    const response = await fetch(url, {
+      next: { revalidate: 3600 }, // Cache por 1 hora
+    });
+
+    if (!response.ok) {
+      // Intentar obtener más información del error
+      let errorMessage = `TMB API error: ${response.status}`;
+      try {
+        const errorData = await response.json().catch(() => null);
+        if (errorData?.message) {
+          errorMessage = errorData.message;
+        }
+      } catch {
+        // Si no se puede parsear el JSON, usar el mensaje por defecto
+      }
+
+      throw new TMBAPIError(
+        errorMessage,
+        response.status,
+        endpoint
+      );
+    }
+
+    return response.json();
+  } catch (error) {
+    // Si es un error de red o timeout
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      throw new TMBAPIError(
+        "No s'ha pogut connectar amb l'API de TMB. Si us plau, torna-ho a intentar més tard.",
+        undefined,
+        endpoint
+      );
+    }
+    // Si ya es un TMBAPIError, re-lanzarlo
+    if (error instanceof TMBAPIError) {
+      throw error;
+    }
+    // Otros errores
+    throw new TMBAPIError(
+      `Error inesperat en la comunicació amb l'API de TMB: ${error instanceof Error ? error.message : "Error desconegut"}`,
+      undefined,
+      endpoint
+    );
+  }
 }
 
 // Obtener todas las líneas de metro
 export async function getMetroLines(): Promise<MetroLine[]> {
-  const data = await fetchTMB<MetroLineProperties>("/linies/metro");
+  try {
+    const data = await fetchTMB<MetroLineProperties>("/linies/metro");
 
-  return data.features
-    .map((feature) => ({
-      id: feature.id,
-      code: feature.properties.CODI_LINIA,
-      name: feature.properties.NOM_LINIA,
-      description: feature.properties.DESC_LINIA,
-      origin: feature.properties.ORIGEN_LINIA,
-      destination: feature.properties.DESTI_LINIA,
-      color: `#${feature.properties.COLOR_LINIA}`,
-      order: feature.properties.ORDRE_LINIA,
-    }))
-    .sort((a, b) => a.order - b.order);
+    if (!data.features || data.features.length === 0) {
+      throw new TMBAPIError(
+        "No s'han trobat línies de metro. L'API ha retornat dades buides.",
+        undefined,
+        "/linies/metro"
+      );
+    }
+
+    return data.features
+      .map((feature) => ({
+        id: feature.id,
+        code: feature.properties.CODI_LINIA,
+        name: feature.properties.NOM_LINIA,
+        description: feature.properties.DESC_LINIA,
+        origin: feature.properties.ORIGEN_LINIA,
+        destination: feature.properties.DESTI_LINIA,
+        color: `#${feature.properties.COLOR_LINIA}`,
+        order: feature.properties.ORDRE_LINIA,
+      }))
+      .sort((a, b) => a.order - b.order);
+  } catch (error) {
+    if (error instanceof TMBAPIError) {
+      throw error;
+    }
+    throw new TMBAPIError(
+      `Error al obtenir les línies de metro: ${error instanceof Error ? error.message : "Error desconegut"}`,
+      undefined,
+      "/linies/metro"
+    );
+  }
 }
 
 // Obtener estaciones de una línea de metro
 export async function getMetroStations(lineCode: number): Promise<MetroStation[]> {
-  const data = await fetchTMB<MetroStationProperties>(
-    `/linies/metro/${lineCode}/estacions`
-  );
+  try {
+    const data = await fetchTMB<MetroStationProperties>(
+      `/linies/metro/${lineCode}/estacions`
+    );
 
-  return data.features
-    .map((feature) => ({
-      id: feature.id,
-      code: feature.properties.CODI_ESTACIO,
-      name: feature.properties.NOM_ESTACIO,
-      order: feature.properties.ORDRE_ESTACIO,
-      origin: feature.properties.ORIGEN_SERVEI,
-      destination: feature.properties.DESTI_SERVEI,
-      status: feature.properties.NOM_TIPUS_ESTAT,
-      coordinates: feature.geometry.coordinates as [number, number],
-    }))
-    .sort((a, b) => a.order - b.order);
+    if (!data.features || data.features.length === 0) {
+      throw new TMBAPIError(
+        `No s'han trobat estacions per a la línia ${lineCode}.`,
+        undefined,
+        `/linies/metro/${lineCode}/estacions`
+      );
+    }
+
+    return data.features
+      .map((feature) => ({
+        id: feature.id,
+        code: feature.properties.CODI_ESTACIO,
+        name: feature.properties.NOM_ESTACIO,
+        order: feature.properties.ORDRE_ESTACIO,
+        origin: feature.properties.ORIGEN_SERVEI,
+        destination: feature.properties.DESTI_SERVEI,
+        status: feature.properties.NOM_TIPUS_ESTAT,
+        coordinates: feature.geometry.coordinates as [number, number],
+      }))
+      .sort((a, b) => a.order - b.order);
+  } catch (error) {
+    if (error instanceof TMBAPIError) {
+      throw error;
+    }
+    throw new TMBAPIError(
+      `Error al obtenir les estacions de la línia ${lineCode}: ${error instanceof Error ? error.message : "Error desconegut"}`,
+      undefined,
+      `/linies/metro/${lineCode}/estacions`
+    );
+  }
 }
 
 // Obtener una línea específica por código
@@ -71,17 +165,37 @@ export async function getMetroLine(lineCode: number): Promise<MetroLine | null> 
 
 // Obtener todas las líneas con sus estaciones (para el mapa general)
 export async function getAllLinesWithStations(): Promise<MetroLineWithStations[]> {
-  const lines = await getMetroLines();
-  
-  const linesWithStations = await Promise.all(
-    lines.map(async (line) => {
-      const stations = await getMetroStations(line.code);
-      return {
-        ...line,
-        stations,
-      };
-    })
-  );
-  
-  return linesWithStations;
+  try {
+    const lines = await getMetroLines();
+    
+    const linesWithStations = await Promise.all(
+      lines.map(async (line) => {
+        try {
+          const stations = await getMetroStations(line.code);
+          return {
+            ...line,
+            stations,
+          };
+        } catch (error) {
+          // Si falla obtener estaciones de una línea, continuar con estaciones vacías
+          console.warn(`No s'han pogut obtenir estacions per a la línia ${line.code}:`, error);
+          return {
+            ...line,
+            stations: [],
+          };
+        }
+      })
+    );
+    
+    return linesWithStations;
+  } catch (error) {
+    if (error instanceof TMBAPIError) {
+      throw error;
+    }
+    throw new TMBAPIError(
+      `Error al obtenir les línies amb estacions: ${error instanceof Error ? error.message : "Error desconegut"}`,
+      undefined,
+      "/linies/metro"
+    );
+  }
 }

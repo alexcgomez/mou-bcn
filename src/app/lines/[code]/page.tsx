@@ -74,41 +74,50 @@ export default async function LineDetailPage({ params }: PageProps) {
   return (
     <div className="space-y-4 pb-4">
       {/* Breadcrumb y navegación */}
-      <div className="flex items-center justify-between">
-        <Link href="/lines">
-          <Button variant="outline" size="sm" className="gap-2">
-            <span>←</span>
-            <span>Tornar a línies</span>
-          </Button>
-        </Link>
-      </div>
+      <nav aria-label="Navegació">
+        <div className="flex items-center justify-between">
+          <Link href="/lines">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
+              aria-label="Tornar a la llista de línies"
+            >
+              <span aria-hidden="true">←</span>
+              <span>Tornar a línies</span>
+            </Button>
+          </Link>
+        </div>
+      </nav>
 
       {/* Header de la línea */}
-      <div 
+      <header 
         className="rounded-xl p-6 text-white shadow-lg"
         style={{ backgroundColor: line.color }}
       >
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <div className="flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur">
+          <div className="flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur" aria-hidden="true">
             <span className="text-3xl font-bold">{line.name}</span>
           </div>
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold">{line.description}</h1>
-            <p className="mt-2 text-white/90 text-lg">
+            <p className="mt-2 text-white/90 text-lg" aria-label={`Ruta: de ${line.origin} a ${line.destination}`}>
               {line.origin} → {line.destination}
             </p>
             <div className="mt-3 flex items-center gap-4">
-              <span className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 text-sm font-medium">
-                <span className="w-2 h-2 rounded-full bg-white"></span>
+              <span className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 text-sm font-medium" aria-label={`${stations.length} estacions`}>
+                <span className="w-2 h-2 rounded-full bg-white" aria-hidden="true"></span>
                 {stations.length} estacions
               </span>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Mapa de la línea */}
-      <LineMapWrapper stations={stations} lineColor={line.color} lineName={line.name} />
+      <section aria-label={`Mapa de la línia ${line.name}`}>
+        <LineMapWrapper stations={stations} lineColor={line.color} lineName={line.name} />
+      </section>
 
       {/* Tabla de estaciones */}
       <Card className="shadow-lg overflow-hidden py-0 gap-0">
@@ -122,11 +131,11 @@ export default async function LineDetailPage({ params }: PageProps) {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-100 hover:bg-gray-100">
-                <TableHead className="w-16 font-semibold text-center bg-gray-100">#</TableHead>
-                <TableHead className="font-semibold bg-gray-100">Estació</TableHead>
-                <TableHead className="font-semibold hidden sm:table-cell bg-gray-100">Origen servei</TableHead>
-                <TableHead className="font-semibold hidden sm:table-cell bg-gray-100">Destí servei</TableHead>
-                <TableHead className="font-semibold text-center w-28 bg-gray-100">Estat</TableHead>
+                <TableHead className="w-16 font-semibold text-center bg-gray-100" scope="col">#</TableHead>
+                <TableHead className="font-semibold bg-gray-100" scope="col">Estació</TableHead>
+                <TableHead className="font-semibold hidden sm:table-cell bg-gray-100" scope="col">Origen servei</TableHead>
+                <TableHead className="font-semibold hidden sm:table-cell bg-gray-100" scope="col">Destí servei</TableHead>
+                <TableHead className="font-semibold text-center w-28 bg-gray-100" scope="col">Estat</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -136,6 +145,7 @@ export default async function LineDetailPage({ params }: PageProps) {
                     <span 
                       className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-sm font-bold"
                       style={{ backgroundColor: line.color }}
+                      aria-label={`Estació número ${index + 1}`}
                     >
                       {index + 1}
                     </span>
@@ -147,6 +157,7 @@ export default async function LineDetailPage({ params }: PageProps) {
                     <Badge
                       variant={station.status === "En servei" ? "default" : "secondary"}
                       className={station.status === "En servei" ? "bg-green-100 text-green-800 hover:bg-green-100" : ""}
+                      aria-label={`Estat: ${station.status}`}
                     >
                       {station.status}
                     </Badge>

@@ -8,17 +8,17 @@ export default function Home() {
       <div className="flex flex-col items-center gap-8 text-white">
         <Image
           src="/metro-logo.png"
-          alt="Metro Barcelona"
+          alt="Logo del Metro de Barcelona"
           width={150}
           height={150}
           className="drop-shadow-2xl"
           priority
         />
-        <Link href="/lines">
+        <Link href="/lines" aria-label="Entrar a MouBCN - Veure línies de metro">
           <Button
             size="lg"
             variant="secondary"
-            className="text-2xl font-bold px-12 py-8 rounded-xl shadow-xl hover:scale-105 transition-transform"
+            className="text-2xl font-bold px-12 py-8 rounded-xl shadow-xl hover:scale-105 transition-transform focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-4 focus:ring-offset-red-600"
           >
             MouBCN
           </Button>

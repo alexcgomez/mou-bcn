@@ -5,11 +5,11 @@ import { MapPinOff } from "lucide-react";
 
 export default function LineNotFound() {
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
+    <div className="flex items-center justify-center min-h-[60vh]" role="alert">
       <Card className="max-w-md w-full">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <MapPinOff className="h-6 w-6 text-gray-500" />
+            <MapPinOff className="h-6 w-6 text-gray-500" aria-hidden="true" />
             <CardTitle>Línia no trobada</CardTitle>
           </div>
           <CardDescription>
@@ -18,7 +18,10 @@ export default function LineNotFound() {
         </CardHeader>
         <CardContent>
           <Link href="/lines">
-            <Button className="w-full">
+            <Button 
+              className="w-full focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
+              aria-label="Tornar a la llista de línies"
+            >
               Tornar a la llista de línies
             </Button>
           </Link>

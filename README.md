@@ -52,6 +52,8 @@ Aplicació web moderna per consultar les línies i estacions del metro de Barcel
    TMB_APP_KEY=tu_app_key
    NEXT_PUBLIC_BASE_URL=http://localhost:3000
    ```
+   
+   **Important per a producció**: Assegura't de configurar `NEXT_PUBLIC_BASE_URL` amb la teva URL real (ex: `https://mou-bcn.vercel.app`). Això és necessari per al SEO i les metadata.
 
 4. **Inicia el servidor de desenvolupament**:
    ```bash
@@ -102,9 +104,11 @@ mou-bcn/
    ```
 
 2. **Configura les variables d'entorn** a la consola de Vercel:
-   - `TMB_APP_ID`
-   - `TMB_APP_KEY`
-   - `NEXT_PUBLIC_BASE_URL` (la teva URL de producció)
+   - `TMB_APP_ID` - **Obligatori**
+   - `TMB_APP_KEY` - **Obligatori**
+   - `NEXT_PUBLIC_BASE_URL` - **Obligatori** (ex: `https://mou-bcn.vercel.app`)
+   
+   **Nota**: Si no configures `NEXT_PUBLIC_BASE_URL`, l'aplicació utilitzarà `http://localhost:3000` per defecte, el que afectarà negativament el SEO.
 
 3. **Desplega**:
    ```bash
