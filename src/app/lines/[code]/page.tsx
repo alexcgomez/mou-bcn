@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineMapWrapper } from "@/components/line-map-wrapper";
+import { StationsTable } from "@/components/stations-table";
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -104,11 +105,35 @@ export default async function LineDetailPage({ params }: PageProps) {
             <p className="mt-2 text-white/90 text-lg" aria-label={`Ruta: de ${line.origin} a ${line.destination}`}>
               {line.origin} → {line.destination}
             </p>
-            <div className="mt-3 flex items-center gap-4">
+            <div className="mt-3 flex items-center gap-4 flex-wrap">
               <span className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 text-sm font-medium" aria-label={`${stations.length} estacions`}>
                 <span className="w-2 h-2 rounded-full bg-white" aria-hidden="true"></span>
                 {stations.length} estacions
               </span>
+              {(() => {
+                const accessibleCount = stations.filter((s) => s.isAccessible).length;
+                const percentage = Math.round((accessibleCount / stations.length) * 100);
+                return accessibleCount > 0 ? (
+                  <span className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 text-sm font-medium" aria-label={`${accessibleCount} estacions accessibles (${percentage}%)`}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-4 h-4"
+                      aria-hidden="true"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                      <path d="M2 12h20" />
+                    </svg>
+                    {accessibleCount} accessibles ({percentage}%)
+                  </span>
+                ) : null;
+              })()}
             </div>
           </div>
         </div>
@@ -127,45 +152,8 @@ export default async function LineDetailPage({ params }: PageProps) {
             Llistat ordenat de totes les estacions
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-100 hover:bg-gray-100">
-                <TableHead className="w-16 font-semibold text-center bg-gray-100" scope="col">#</TableHead>
-                <TableHead className="font-semibold bg-gray-100" scope="col">Estació</TableHead>
-                <TableHead className="font-semibold hidden sm:table-cell bg-gray-100" scope="col">Origen servei</TableHead>
-                <TableHead className="font-semibold hidden sm:table-cell bg-gray-100" scope="col">Destí servei</TableHead>
-                <TableHead className="font-semibold text-center w-28 bg-gray-100" scope="col">Estat</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {stations.map((station, index) => (
-                <TableRow key={station.id} className="hover:bg-gray-50 transition-colors">
-                  <TableCell className="text-center py-3">
-                    <span 
-                      className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-sm font-bold"
-                      style={{ backgroundColor: line.color }}
-                      aria-label={`Estació número ${index + 1}`}
-                    >
-                      {index + 1}
-                    </span>
-                  </TableCell>
-                  <TableCell className="font-semibold text-gray-900 py-3">{station.name}</TableCell>
-                  <TableCell className="text-gray-600 hidden sm:table-cell py-3">{station.origin}</TableCell>
-                  <TableCell className="text-gray-600 hidden sm:table-cell py-3">{station.destination}</TableCell>
-                  <TableCell className="text-center py-3">
-                    <Badge
-                      variant={station.status === "En servei" ? "default" : "secondary"}
-                      className={station.status === "En servei" ? "bg-green-100 text-green-800 hover:bg-green-100" : ""}
-                      aria-label={`Estat: ${station.status}`}
-                    >
-                      {station.status}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <CardContent className="p-6">
+          <StationsTable stations={stations} lineColor={line.color} lineCode={line.code} />
         </CardContent>
       </Card>
     </div>

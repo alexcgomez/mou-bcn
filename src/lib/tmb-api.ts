@@ -5,6 +5,8 @@ import type {
   MetroLine,
   MetroStation,
   MetroLineWithStations,
+  CorrespondenceProperties,
+  Correspondence,
 } from "./types";
 import "./env"; // Validar variables de entorno al importar
 
@@ -134,16 +136,24 @@ export async function getMetroStations(lineCode: number): Promise<MetroStation[]
     }
 
     return data.features
-      .map((feature) => ({
-        id: feature.id,
-        code: feature.properties.CODI_ESTACIO,
-        name: feature.properties.NOM_ESTACIO,
-        order: feature.properties.ORDRE_ESTACIO,
-        origin: feature.properties.ORIGEN_SERVEI,
-        destination: feature.properties.DESTI_SERVEI,
-        status: feature.properties.NOM_TIPUS_ESTAT,
-        coordinates: feature.geometry.coordinates as [number, number],
-      }))
+      .map((feature) => {
+        const accessibility = feature.properties.NOM_TIPUS_ACCESSIBILITAT;
+        const isAccessible = accessibility?.toLowerCase() === "accessible";
+        
+        return {
+          id: feature.id,
+          code: feature.properties.CODI_ESTACIO,
+          name: feature.properties.NOM_ESTACIO,
+          order: feature.properties.ORDRE_ESTACIO,
+          origin: feature.properties.ORIGEN_SERVEI,
+          destination: feature.properties.DESTI_SERVEI,
+          status: feature.properties.NOM_TIPUS_ESTAT,
+          coordinates: feature.geometry.coordinates as [number, number],
+          accessibility: accessibility || undefined,
+          isAccessible: isAccessible || false,
+          stationLineCode: feature.properties.CODI_ESTACIO_LINIA,
+        };
+      })
       .sort((a, b) => a.order - b.order);
   } catch (error) {
     if (error instanceof TMBAPIError) {
@@ -197,5 +207,49 @@ export async function getAllLinesWithStations(): Promise<MetroLineWithStations[]
       undefined,
       "/linies/metro"
     );
+  }
+}
+
+// Obtener correspondencias de una estación
+export async function getStationCorrespondences(
+  lineCode: number,
+  stationCode: number
+): Promise<Correspondence[]> {
+  try {
+    const data = await fetchTMB<CorrespondenceProperties>(
+      `/linies/metro/${lineCode}/estacions/${stationCode}/corresp`
+    );
+
+    if (!data.features || data.features.length === 0) {
+      return [];
+    }
+
+    return data.features.map((feature) => {
+      const coords = feature.geometry.coordinates as [number, number];
+      return {
+        id: feature.id,
+        lineCode: feature.properties.CODI_LINIA,
+        lineName: feature.properties.NOM_LINIA,
+        lineDescription: feature.properties.DESC_LINIA,
+        lineOrigin: feature.properties.ORIGEN_LINIA,
+        lineDestination: feature.properties.DESTI_LINIA,
+        lineColor: `#${feature.properties.COLOR_LINIA}`,
+        family: feature.properties.NOM_FAMILIA,
+        operator: feature.properties.NOM_OPERADOR,
+        stationName: feature.properties.NOM_ELEMENT_CORRESP,
+        coordinates: coords,
+      };
+    });
+  } catch (error) {
+    // Si no hay correspondencias o hay error, retornar array vacío
+    // (no es crítico para la funcionalidad principal)
+    if (error instanceof TMBAPIError && error.statusCode === 404) {
+      return [];
+    }
+    console.warn(
+      `Error al obtenir correspondències per a l'estació ${stationCode} de la línia ${lineCode}:`,
+      error
+    );
+    return [];
   }
 }
