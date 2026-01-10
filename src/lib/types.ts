@@ -77,4 +77,5 @@ export interface MetroStation {
   origin: string;
   destination: string;
   status: string;
+  coordinates: [number, number]; // [longitude, latitude]
 }

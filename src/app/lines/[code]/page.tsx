@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LineMap } from "@/components/line-map";
 
 interface PageProps {
   params: Promise<{ code: string }>;
@@ -69,6 +70,9 @@ export default async function LineDetailPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {/* Mapa de la línea */}
+      <LineMap stations={stations} lineColor={line.color} lineName={line.name} />
 
       {/* Tabla de estaciones */}
       <Card className="shadow-lg overflow-hidden py-0 gap-0">

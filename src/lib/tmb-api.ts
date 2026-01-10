@@ -57,6 +57,7 @@ export async function getMetroStations(lineCode: number): Promise<MetroStation[]
       origin: feature.properties.ORIGEN_SERVEI,
       destination: feature.properties.DESTI_SERVEI,
       status: feature.properties.NOM_TIPUS_ESTAT,
+      coordinates: feature.geometry.coordinates as [number, number],
     }))
     .sort((a, b) => a.order - b.order);
 }
