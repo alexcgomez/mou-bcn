@@ -105,14 +105,19 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
 
     const styleDataHandler = () => setIsStyleLoaded(true);
     const loadHandler = () => setIsLoaded(true);
+    const errorHandler = (e: any) => {
+      console.error("MapLibre error:", e);
+    };
 
     map.on("load", loadHandler);
     map.on("styledata", styleDataHandler);
+    map.on("error", errorHandler);
     setMapInstance(map);
 
     return () => {
       map.off("load", loadHandler);
       map.off("styledata", styleDataHandler);
+      map.off("error", errorHandler);
       map.remove();
       setIsLoaded(false);
       setIsStyleLoaded(false);

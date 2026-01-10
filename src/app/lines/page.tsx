@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getMetroLines, getAllLinesWithStations } from "@/lib/tmb-api";
 import {
@@ -11,7 +12,21 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MetroNetworkMap } from "@/components/metro-network-map";
+import { MetroNetworkMapWrapper } from "@/components/metro-network-map-wrapper";
+
+export const metadata: Metadata = {
+  title: "Línies de Metro",
+  description: "Consulta totes les línies del metro de Barcelona i les seves estacions. Visualitza la xarxa completa del metro de TMB.",
+  openGraph: {
+    title: "Línies de Metro - MouBCN",
+    description: "Consulta totes les línies del metro de Barcelona i les seves estacions",
+    url: "/lines",
+  },
+  twitter: {
+    title: "Línies de Metro - MouBCN",
+    description: "Consulta totes les línies del metro de Barcelona i les seves estacions",
+  },
+};
 
 export default async function LinesPage() {
   const [lines, linesWithStations] = await Promise.all([
@@ -29,7 +44,7 @@ export default async function LinesPage() {
       </div>
 
       {/* Mapa de la xarxa de metro */}
-      <MetroNetworkMap lines={linesWithStations} />
+      <MetroNetworkMapWrapper lines={linesWithStations} />
 
       <Card className="shadow-lg overflow-hidden py-0 gap-0">
         <CardHeader className="bg-gray-50 border-b py-4 px-6">

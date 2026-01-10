@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getMetroLine, getMetroStations } from "@/lib/tmb-api";
@@ -12,10 +13,45 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineMap } from "@/components/line-map";
+import { LineMapWrapper } from "@/components/line-map-wrapper";
 
 interface PageProps {
   params: Promise<{ code: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { code } = await params;
+  const lineCode = parseInt(code, 10);
+
+  if (isNaN(lineCode)) {
+    return {
+      title: "Línia no trobada",
+    };
+  }
+
+  const line = await getMetroLine(lineCode);
+
+  if (!line) {
+    return {
+      title: "Línia no trobada",
+    };
+  }
+
+  const stations = await getMetroStations(lineCode);
+
+  return {
+    title: `${line.name} - ${line.description}`,
+    description: `Informació completa de la línia ${line.name} del metro de Barcelona. ${stations.length} estacions des de ${line.origin} fins a ${line.destination}.`,
+    openGraph: {
+      title: `${line.name} - ${line.description}`,
+      description: `Línia ${line.name}: ${line.origin} → ${line.destination} (${stations.length} estacions)`,
+      url: `/lines/${line.code}`,
+    },
+    twitter: {
+      title: `${line.name} - ${line.description}`,
+      description: `Línia ${line.name}: ${line.origin} → ${line.destination} (${stations.length} estacions)`,
+    },
+  };
 }
 
 export default async function LineDetailPage({ params }: PageProps) {
@@ -72,7 +108,7 @@ export default async function LineDetailPage({ params }: PageProps) {
       </div>
 
       {/* Mapa de la línea */}
-      <LineMap stations={stations} lineColor={line.color} lineName={line.name} />
+      <LineMapWrapper stations={stations} lineColor={line.color} lineName={line.name} />
 
       {/* Tabla de estaciones */}
       <Card className="shadow-lg overflow-hidden py-0 gap-0">
